@@ -28,9 +28,36 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  res.send("Hi World! Welcome to my API login");
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return sendResponse(res, false, "Please fill all fields");
+  }
+  const user = await Users.findOne({ email });
+
+  if (!user) {
+    return sendResponse(res, false, "User not found");
+  }
+  if (user.password !== password) {
+    return sendResponse(res, false, "Invalid credentials");
+  }
+
+  return sendResponse(res, true, "User Login", user);
 };
-export const profile = (req, res) => {
-  res.send("Hi World! Welcome to my API");
+
+export const profile = async (req, res) => {
+  console.log(req.params.userId);
+  // const { userId } = req.params;
+  if (!req.params.userId) {
+    return sendResponse(res, false, "Invalid User ID");
+  }
+
+  const user = await Users.findById({ _id: req.params.userId }).select(
+    "-password"
+  );
+  if (!user) {
+    return sendResponse(res, false, "User not found");
+  }
+  return sendResponse(res, true, "User Profile", user);
 };
