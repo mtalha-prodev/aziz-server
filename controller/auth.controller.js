@@ -1,10 +1,10 @@
-import { sendError, sendResponse } from "../helper/respons.js";
+import { sendError, sendResponse, sendToken } from "../helper/respons.js";
 import Users from "../model/auth.model.js";
+import bcrypt from "bcryptjs";
 
 export const register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
-    console.log(req.body);
 
     if (!name || !email || !password || !phone) {
       return sendResponse(res, false, "Please fill all fields");
@@ -16,13 +16,19 @@ export const register = async (req, res) => {
       return sendResponse(res, false, "User already exists");
     }
 
-    const data = { name, email, password, phone };
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const data = {
+      ...req.body,
+      role: "user",
+      password: hashedPassword,
+    };
 
     const newUser = new Users(data);
 
-    await newUser.save();
+    const reg = await newUser.save();
 
-    return sendResponse(res, true, "User registered successfully");
+    return sendToken(res, reg, "User registered successfully");
   } catch (error) {
     return sendError(res, error);
   }
@@ -39,25 +45,39 @@ export const login = async (req, res) => {
   if (!user) {
     return sendResponse(res, false, "User not found");
   }
-  if (user.password !== password) {
+
+  const isMatch = await user.isPassMatch(password);
+
+  if (!isMatch) {
     return sendResponse(res, false, "Invalid credentials");
   }
 
-  return sendResponse(res, true, "User Login", user);
+  return sendToken(res, user, "User Login");
 };
 
 export const profile = async (req, res) => {
-  console.log(req.params.userId);
-  // const { userId } = req.params;
-  if (!req.params.userId) {
-    return sendResponse(res, false, "Invalid User ID");
-  }
-
-  const user = await Users.findById({ _id: req.params.userId }).select(
-    "-password"
-  );
-  if (!user) {
+  console.log(req.user);
+  if (!req.user) {
     return sendResponse(res, false, "User not found");
   }
-  return sendResponse(res, true, "User Profile", user);
+  return sendResponse(res, true, "User Profile", req.user);
 };
+export const upload_pic = async (req, res) => {
+  console.log(req.file);
+
+  // console.log(req.user);
+  // if (!req.user) {
+  //   return sendResponse(res, false, "User not found");
+  // }
+  return sendResponse(res, true, "User Profile", req.user);
+};
+
+// const data = async()=>{
+
+//   const data = await axios.post('http://localhost:5000/api/v1/login', {email:'emial@gmail.com', password:"123456"},{
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': 'Bearer '+token
+//     }
+//   })
+// }

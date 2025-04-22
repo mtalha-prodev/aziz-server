@@ -1,4 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const userSchema = Schema({
   name: String,
@@ -10,7 +12,7 @@ const userSchema = Schema({
   password: String,
   role: {
     type: String,
-    default: "user",
+    enum: ["user", "manager", "super-admin"],
   },
 
   profile_pic: {
@@ -25,5 +27,13 @@ const userSchema = Schema({
   created_at: { type: Date, default: Date.now },
   updated_at: Date,
 });
+
+userSchema.methods.isPassMatch = function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.getAuthToken = async function () {
+  return await jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
+};
 
 export default mongoose.model("user", userSchema);
