@@ -1,13 +1,14 @@
 import { sendError, sendResponse } from "../helper/respons.js";
 import jwt from "jsonwebtoken";
 import Users from "../model/auth.model.js";
+import { msg } from "../i18n/text.js";
 
 export const isAuth = async (req, res, next) => {
   try {
     const token = req?.headers?.authorization.split(" ")[1];
 
     if (!token) {
-      return sendResponse(res, false, "Token is required");
+      return sendResponse(res, false, msg.auth);
     }
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     console.log(decoded);
@@ -24,11 +25,11 @@ export const isAuthorize = (role = []) => {
   try {
     return async (req, res, next) => {
       if (!req.user) {
-        return sendResponse(res, false, "User not authenticated");
+        return sendResponse(res, false, msg.auth);
       }
 
       if (role.length > 0 && !role.includes(req.user.role)) {
-        return sendResponse(res, false, "User is not Access ");
+        return sendResponse(res, false, msg.unauthorized);
       }
 
       next();

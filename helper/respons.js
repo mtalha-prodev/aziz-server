@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 export const sendToken = async (res, user, msg) => {
   const token = await user.getAuthToken();
 
@@ -25,7 +27,7 @@ export const sendResponse = (res, status, msg, user) => {
       name: user?.name,
       email: user?.email,
       role: user?.role,
-      picture: user?.profile_pic,
+      picture: `http://localhost:5000/profile/${user?.profile_pic}`,
       phone: user?.phone,
     },
   });
@@ -36,3 +38,5 @@ export const sendError = (res, msg) => {
     message: msg,
   });
 };
+
+export const hashPass = async (pass) => await bcrypt.hash(pass, 10);

@@ -1,22 +1,27 @@
-import { sendError, sendResponse, sendToken } from "../helper/respons.js";
+import {
+  hashPass,
+  sendError,
+  sendResponse,
+  sendToken,
+} from "../helper/respons.js";
+import { msg } from "../i18n/text.js";
 import Users from "../model/auth.model.js";
-import bcrypt from "bcryptjs";
 
 export const register = async (req, res) => {
   try {
     const { name, email, password, phone } = req.body;
 
     if (!name || !email || !password || !phone) {
-      return sendResponse(res, false, "Please fill all fields");
+      return sendResponse(res, false, msg.fillAllFields);
     }
 
     const user = await Users.findOne({ email });
 
     if (user) {
-      return sendResponse(res, false, "User already exists");
+      return sendResponse(res, false, msg.userExists);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPass(password);
 
     const data = {
       ...req.body,
@@ -28,7 +33,7 @@ export const register = async (req, res) => {
 
     const reg = await newUser.save();
 
-    return sendToken(res, reg, "User registered successfully");
+    return sendToken(res, reg, msg.success);
   } catch (error) {
     return sendError(res, error);
   }
@@ -38,38 +43,93 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return sendResponse(res, false, "Please fill all fields");
+    return sendResponse(res, false, msg.fillAllFields);
   }
   const user = await Users.findOne({ email });
 
   if (!user) {
-    return sendResponse(res, false, "User not found");
+    return sendResponse(res, false, msg.userNotFound);
   }
 
   const isMatch = await user.isPassMatch(password);
 
   if (!isMatch) {
-    return sendResponse(res, false, "Invalid credentials");
+    return sendResponse(res, false, msg.passwordMismatch);
   }
 
-  return sendToken(res, user, "User Login");
+  return sendToken(res, user, msg.success);
 };
 
 export const profile = async (req, res) => {
   console.log(req.user);
   if (!req.user) {
-    return sendResponse(res, false, "User not found");
+    return sendResponse(res, false, msg.userNotFound);
   }
-  return sendResponse(res, true, "User Profile", req.user);
+  return sendResponse(res, true, msg.success, req.user);
 };
-export const upload_pic = async (req, res) => {
-  console.log(req.file);
 
-  // console.log(req.user);
-  // if (!req.user) {
-  //   return sendResponse(res, false, "User not found");
-  // }
-  return sendResponse(res, true, "User Profile", req.user);
+export const updateProfile = async (req, res) => {
+  try {
+    if (!req.user) {
+      return sendResponse(res, false, msg.userNotFound);
+    }
+
+    const update = await Users.findByIdAndUpdate(
+      { _id: req.user._id },
+      req.body,
+      {
+        new: true,
+      }
+    );
+
+    return sendResponse(res, true, msg.success, update);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+export const changePass = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!req.user) {
+      return sendResponse(res, false, msg.userNotFound);
+    }
+
+    const isMatch = await req.user.isPassMatch(oldPassword);
+    if (!isMatch) {
+      return sendResponse(res, false, msg.passwordMismatch);
+    }
+
+    const hashedPassword = await hashPass(newPassword);
+
+    const update = await Users.findByIdAndUpdate(
+      { _id: req.user._id },
+      { password: hashedPassword },
+      {
+        new: true,
+      }
+    );
+
+    return sendResponse(res, true, msg.success, update);
+  } catch (error) {
+    sendError(res, error);
+  }
+};
+
+export const upload_pic = async (req, res) => {
+  if (!req.user) {
+    return sendResponse(res, false, msg.userNotFound);
+  }
+  console.log(req.file);
+  const data = {
+    profile_pic: req.file.filename,
+  };
+
+  const update = await Users.findByIdAndUpdate({ _id: req.user._id }, data, {
+    new: true,
+  });
+
+  return sendResponse(res, true, msg.success, update);
 };
 
 // const data = async()=>{
