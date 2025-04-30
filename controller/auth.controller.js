@@ -9,9 +9,9 @@ import Users from "../model/auth.model.js";
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !password || !phone) {
+    if (!name || !email || !password) {
       return sendResponse(res, false, msg.fillAllFields);
     }
 
