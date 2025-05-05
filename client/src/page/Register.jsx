@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "../assets/auth.png";
 import { postWithoutToken } from "../api/fetch";
-import { base_url, endPoint } from "../utils/endpoint";
-import { useNavigation } from "react-router-dom";
+import { endPoint } from "../utils/endpoint";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigation();
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
@@ -22,7 +22,8 @@ function Register() {
 
       localStorage.setItem("accessToken", resp.accessToken);
 
-      navigate.navigate("/");
+      // navigate("/");
+      window.location.href("/profile");
 
       alert(resp.message);
     } catch (error) {
@@ -33,7 +34,7 @@ function Register() {
   const getToken = () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      navigate.navigate("/");
+      navigate("/");
     }
   };
 
@@ -119,9 +120,12 @@ function Register() {
 
           <p className="mt-6 text-sm text-center text-gray-600">
             Already have an account?{" "}
-            <span className="text-green-600 font-semibold cursor-pointer hover:underline">
+            <Link
+              to={"/login"}
+              className="text-green-600 font-semibold cursor-pointer hover:underline"
+            >
               Sign in
-            </span>
+            </Link>
           </p>
         </div>
       </div>

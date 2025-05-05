@@ -3,11 +3,13 @@ import ImgFlag from "../assets/english.png";
 import Image from "../assets/theme-logo-black.png";
 import { header, footer } from "./css/header";
 import Dropdown from "./Dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
   const [show, setShow] = useState(false);
+  const [desh, setDesh] = useState(false);
   const [token, setToken] = useState("");
+  const navigate = useNavigate();
 
   const getToken = () => {
     const token = localStorage.getItem("accessToken");
@@ -18,6 +20,31 @@ function Header() {
     getToken();
     return () => {};
   }, []);
+
+  const profile = [
+    {
+      name: "Profile",
+      icon: "",
+      color: "red",
+    },
+    {
+      name: "Setting",
+      icon: "",
+      color: "blue",
+      action: () => {
+        navigate("/setting");
+      },
+    },
+    {
+      name: "Logout",
+      icon: "",
+      color: "orange",
+      action: () => {
+        localStorage.removeItem("accessToken");
+        window.location.href = "/";
+      },
+    },
+  ];
 
   return (
     <div className={header.container}>
@@ -39,7 +66,7 @@ function Header() {
           <img src={ImgFlag} className="w-6 h-6 mr-1" alt="" srcset="" />
           {/* <i className="fa-regular fa-flag text-base text-white p-2 py-1 bg-green-700 rounded-full"></i>{" "} */}
           English <i className="fa-solid fa-angle-down self-center ml-1"></i>
-          {show && <Dropdown />}
+          {show && <Dropdown data={country} />}
         </button>
         <p className={header.dropdown}>
           <span className="w-7 h-7 bg-green-500 rounded-full flex justify-center items-center mr-1">
@@ -52,7 +79,10 @@ function Header() {
             <i className="fa-regular fa-user text-base text-white"></i>
           </span>
           {token ? (
-            <Link to="/profile">Profile</Link>
+            <>
+              <button onClick={() => setDesh(!desh)}>Profile</button>
+              {desh && <Dropdown data={profile} />}
+            </>
           ) : (
             <Link to="/login">Account</Link>
           )}
@@ -63,3 +93,18 @@ function Header() {
 }
 
 export default Header;
+
+const country = [
+  {
+    name: "PK",
+    icon: "",
+  },
+  {
+    name: "IN",
+    icon: "",
+  },
+  {
+    name: "UAE",
+    icon: "",
+  },
+];

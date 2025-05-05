@@ -27,7 +27,7 @@ export const sendResponse = (res, status, msg, user) => {
       name: user?.name,
       email: user?.email,
       role: user?.role,
-      picture: `http://localhost:5000/profile/${user?.profile_pic}`,
+      picture: `http://localhost:3000/profile/${user?.profile_pic}`,
       phone: user?.phone,
     },
   });

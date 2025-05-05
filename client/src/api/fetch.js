@@ -37,9 +37,13 @@ export const putWithToken = async (data, endPoint, token) => {
   }
 };
 
-export const getWithToken = async (endPoint, token) => {
+export const getWithToken = async (endPoint) => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    return;
+  }
   try {
-    const resp = await axios.get(`${base_url}/${endPoint}`, {
+    const resp = await axios.get(endPoint, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
