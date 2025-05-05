@@ -16,6 +16,7 @@ const Dropdown = ({ data }) => {
             key={index}
           >
             <i>{item.icon}</i>
+            <i>{item.icon}</i>
             <p className="text-black font-medium text-sm">{item.name}</p>
           </button>
         );
