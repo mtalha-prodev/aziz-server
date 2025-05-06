@@ -8,7 +8,7 @@ export const endPoint ={
     dashboard: '/dashboard',
     profile: '/profile',
     product: '/product',
-    updateProfile: '/updateProfile',
+    updateProfile: '/update/profile',
     uploadProfilePic: '/uploadProfilePic',
     deleteProduct: '/deleteProduct',
     editProduct: '/editProduct',

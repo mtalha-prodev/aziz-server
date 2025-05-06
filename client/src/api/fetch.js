@@ -18,9 +18,10 @@ export const postWithoutToken = async (data, endPoint) => {
     console.error(error.message);
   }
 };
-export const putWithToken = async (data, endPoint, token) => {
+export const putWithToken = async (data, endPoint) => {
+  const token = localStorage.getItem("accessToken");
   try {
-    const resp = await axios.put(`${base_url}/${endPoint}`, data, {
+    const resp = await axios.put(endPoint, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -30,7 +31,7 @@ export const putWithToken = async (data, endPoint, token) => {
     if (!resp.data.status) {
       console.log(resp.data.message);
     }
-
+    
     return resp.data;
   } catch (error) {
     console.error(error.message);

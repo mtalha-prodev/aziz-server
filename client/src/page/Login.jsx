@@ -20,11 +20,17 @@ function Login() {
       const resp = await postWithoutToken(data, endPoint.login);
 
       localStorage.setItem("accessToken", resp.accessToken);
+      localStorage.setItem("user", JSON.stringify(resp.content));
 
       console.log(resp);
 
       alert(resp.message);
-      window.location.href = "/profile";
+      if(resp.content.role == 'user'){
+        
+        window.location.href = "/profile";
+      }else{
+        window.location.href = "/admin";
+      }
       // navigate("/profile");
     } catch (error) {
       console.log(error);
