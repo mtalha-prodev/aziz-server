@@ -5,8 +5,11 @@ import Categories from "../components/Categories";
 import Trending from "../components/Trending";
 import Flash from "../components/FlashSale";
 import Popular from "../components/PopularBrands";
+import { useSelector } from "react-redux";
 
 function Home() {
+  const count = useSelector((state) => state.counter);
+  console.log(count, "counndafkjkdajfkadjfka");
   return (
     <div>
       <Slider />
