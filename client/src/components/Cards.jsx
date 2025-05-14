@@ -8,14 +8,14 @@ import CardImg4 from "../assets/beef_meat-cover.png";
 import CardImg5 from "../assets/chicken_breast_tenderloins-cover.png";
 import LastBanner from "../assets/buy_fresh_&_organic_sea_food-preview.jpg";
 import { useDispatch } from "react-redux";
-import { increment } from "../store/reducer/slice";
+import { addCart, increment } from "../store/reducer/slice";
 
 function Cards() {
   const dispath = useDispatch();
 
-  const addToCart = () => {
-    console.log("add to cart");
+  const addToCart = (item) => {
     dispath(increment());
+    dispath(addCart(item));
   };
 
   const Card = [
@@ -159,11 +159,14 @@ function Cards() {
 
 const CardsItems = ({ text, cart }) => {
   return (
-    <div onClick={() => cart()} className="flex justify-around flex-wrap">
+    <div className="flex justify-around flex-wrap">
       {text.map((item) => {
         return (
           <>
-            <div className="flex justify-between items-center w-ful p-2">
+            <div
+              onClick={() => cart(item)}
+              className="flex justify-between items-center w-ful p-2"
+            >
               <div className="bg-white border-solid border-2 border-gray-300 rounded-lg p-2">
                 <img
                   src={item.Image}

@@ -8,8 +8,8 @@ import Popular from "../components/PopularBrands";
 import { useSelector } from "react-redux";
 
 function Home() {
-  const count = useSelector((state) => state.counter);
-  console.log(count, "counndafkjkdajfkadjfka");
+  
+
   return (
     <div>
       <Slider />

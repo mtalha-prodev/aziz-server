@@ -27,9 +27,7 @@ function App() {
     getRole();
   }, []);
 
-
   return (
-    
     <BrowserRouter>
       {role == "user" ? (
         <>

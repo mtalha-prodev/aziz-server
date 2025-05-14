@@ -27,11 +27,12 @@ function Login() {
       alert(resp.message);
       if(resp.content.role == 'user'){
         
-        window.location.href = "/profile";
+        // window.location.href = "/profile";
+        navigate("/profile");
       }else{
-        window.location.href = "/admin";
+        navigate("/admin");
+        // window.location.href = "/admin";
       }
-      // navigate("/profile");
     } catch (error) {
       console.log(error);
     }

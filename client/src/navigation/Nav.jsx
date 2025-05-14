@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { navbar } from "./css/navigation";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Nav() {
   const [count, setCount] = useState(0);
-
+  const { value, product } = useSelector((state) => state.counter);
+  console.log(product);
   return (
     <div className=" flex justify-between items-center px-2 py-4 ">
       <div className="flex justify-center items-center">
@@ -47,7 +49,7 @@ function Nav() {
           onClick={() => setCount(count + 1)}
           className="bg-green-500 font-semibold  py-2 px-3 text-white rounded-lg"
         >
-          <i class="fa-solid fa-bag-shopping mr-2"></i> My Cart {`( ${count} )`}
+          <i class="fa-solid fa-bag-shopping mr-2"></i> My Cart {`( ${value} )`}
         </button>
       </div>
     </div>
