@@ -3,32 +3,15 @@ import { endPoint } from "../utils/endpoint";
 import { getWithToken, putWithToken } from "../api/fetch";
 import { ClipLoader } from "react-spinners";
 import Loader from "../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfile } from "../store/reducer/authSlice";
 
 function Profile() {
-  const [userData, setUserData] = useState({});
+  const { user } = useSelector((state) => state.auth);
   const [loader, setLoader] = useState(true);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("");
-
-  const getUser = async () => {
-    try {
-      const user = await getWithToken(endPoint.profile);
-
-      console.log(user);
-
-      if (!user.status) {
-        alert(user.message);
-      }
-      setLoader(false);
-      setName(user.content.name);
-      setRole(user.content.role);
-
-      setUserData(user);
-      //   alert(user.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [name, setName] = useState(user?.name);
+  const [role, setRole] = useState(user?.role);
+  const dispatch = useDispatch();
 
   const update = async () => {
     try {
@@ -41,22 +24,18 @@ function Profile() {
         role,
       };
 
-      const update = await putWithToken(data, endPoint.updateProfile);
+      const resp = await putWithToken(data, endPoint.updateProfile);
 
-      console.log(update);
-      if (!update.status) {
-        alert(update.message);
+      dispatch(updateProfile(resp));
+      console.log(resp);
+      if (!resp.status) {
+        alert(resp.message);
         return;
       }
-      setUserData(update);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   return (
     <div>
@@ -70,10 +49,10 @@ function Profile() {
       </button>
 
       <h2>User Profile</h2>
-      <p>Name: {userData?.content?.name}</p>
-      <p>Email: {userData?.content?.email}</p>
-      <p>role: {userData?.content?.role}</p>
-      <img src={userData?.content?.picture} alt="User Pic" />
+      <p>Name: {user?.name}</p>
+      <p>Email: {user?.email}</p>
+      <p>role: {user?.role}</p>
+      <img src={user?.picture} alt="User Pic" />
 
       <input
         name="name"
@@ -94,7 +73,7 @@ function Profile() {
         Update profile
       </button>
 
-      {loader && <Loader loader={loader} />}
+      {/* {loader && <Loader loader={loader} />} */}
     </div>
   );
 }

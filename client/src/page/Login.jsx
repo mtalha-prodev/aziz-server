@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Image from "../assets/auth.png";
 import { Link, useNavigate } from "react-router-dom";
-import { endPoint } from "../utils/endpoint";
+
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../store/reducer/authSlice";
 import { postWithoutToken } from "../api/fetch";
+import { endPoint } from "../utils/endpoint";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   let navigate = useNavigate();
 
@@ -16,38 +21,23 @@ function Login() {
         email,
         password,
       };
-
       const resp = await postWithoutToken(data, endPoint.login);
+      dispatch(login(resp));
 
-      localStorage.setItem("accessToken", resp.accessToken);
-      localStorage.setItem("user", JSON.stringify(resp.content));
-
-      console.log(resp);
-
-      alert(resp.message);
-      if(resp.content.role == 'user'){
-        
-        // window.location.href = "/profile";
+      if (resp.status) {
         navigate("/profile");
-      }else{
-        navigate("/admin");
-        // window.location.href = "/admin";
+      } else {
+        alert(resp.message);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  const getToken = () => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      // navigate("/");
-      window.location.href("/profile");
-    }
-  };
-
+  // console.log(success, token, "login");
   useEffect(() => {
-    getToken();
+    if (token) {
+      navigate("/profile");
+    }
     return () => {};
   }, []);
 

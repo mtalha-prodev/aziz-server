@@ -1,37 +1,44 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
- acccessToken:true
+  loading: false,
+  user: JSON.parse(localStorage.getItem("user"))
+    ? JSON.parse(localStorage.getItem("user"))
+    : null,
+  role: localStorage.getItem("role") ? localStorage.getItem("role") : "user",
+  token: localStorage.getItem("accessToken")
+    ? localStorage.getItem("accessToken")
+    : null,
 };
 
-export const authSlice = createSlice({
-  name: "counter",
+export const userSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
-    login: (state) => {
-      state.value += 1;
+    login: (state, { payload }) => {
+      state.loading = true;
+      state.user = payload.content;
+      state.token = payload.accessToken;
+      state.role = payload.content.role;
+
+      localStorage.setItem("accessToken", payload.accessToken);
+      localStorage.setItem("role", payload.content.role);
+      localStorage.setItem("user", JSON.stringify(payload.content));
+      state.loading = false;
+    },
+    updateProfile: (state, { payload }) => {
+      state.user = payload.content;
+      state.role = payload.content.role;
+      localStorage.setItem("role", payload.content.role);
+      localStorage.setItem("user", JSON.stringify(payload.content));
     },
 
-    register: (state) => {
-      state.value -= 1;
+    setMessage: (state, action) => {
+      state.message = action.payload;
     },
-    passwordForget: async (state, actions) => {
-      state.product.push(actions.payload);
-    },
-    passwordChange: async (state, actions) => {
-      state.product.push(actions.payload);
-    },
-    updateProfile: async (state, actions) => {
-      state.product.push(actions.payload);
-    },
-    getProfile: async (state, actions) => {
-      state.product.push(actions.payload);
-    },
-   
   },
 });
-// component call function
-export const { increment, decrement, addCart } = counterSlice.actions;
 
-// stora value
-export default counterSlice.reducer;
+export const { login, setMessage, updateProfile } = userSlice.actions;
+
+export default userSlice.reducer;

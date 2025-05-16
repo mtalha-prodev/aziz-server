@@ -12,7 +12,7 @@ export const postWithoutToken = async (data, endPoint) => {
     if (!resp.data.status) {
       console.log(resp.data.message);
     }
-
+    
     return resp.data;
   } catch (error) {
     console.error(error.message);
@@ -31,7 +31,7 @@ export const putWithToken = async (data, endPoint) => {
     if (!resp.data.status) {
       console.log(resp.data.message);
     }
-    
+
     return resp.data;
   } catch (error) {
     console.error(error.message);

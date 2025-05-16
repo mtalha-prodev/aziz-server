@@ -4,22 +4,14 @@ import Image from "../assets/theme-logo-black.png";
 import { header, footer } from "./css/header";
 import Dropdown from "./Dropdown";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Header() {
+  const { token } = useSelector((state) => state.auth);
   const [show, setShow] = useState(false);
   const [desh, setDesh] = useState(false);
-  const [token, setToken] = useState("");
+
   const navigate = useNavigate();
-
-  const getToken = () => {
-    const token = localStorage.getItem("accessToken");
-    setToken(token);
-  };
-
-  useEffect(() => {
-    getToken();
-    return () => {};
-  }, []);
 
   const profile = [
     {
