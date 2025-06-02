@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/reducer/authSlice";
 import { postWithoutToken } from "../api/fetch";
 import { endPoint } from "../utils/endpoint";
+import { loginPost } from "../store/action/auth";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -21,8 +22,8 @@ function Login() {
         email,
         password,
       };
-      const resp = await postWithoutToken(data, endPoint.login);
-      dispatch(login(resp));
+      // const resp = await postWithoutToken(data, endPoint.login);
+      const resp = await dispatch(loginPost(data));
 
       if (resp.status) {
         navigate("/profile");

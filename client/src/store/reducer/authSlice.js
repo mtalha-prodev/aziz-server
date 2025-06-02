@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginPost } from "../action/auth";
 
 const initialState = {
   loading: false,
@@ -9,6 +10,7 @@ const initialState = {
   token: localStorage.getItem("accessToken")
     ? localStorage.getItem("accessToken")
     : null,
+    error:''
 };
 
 export const userSlice = createSlice({
@@ -36,7 +38,24 @@ export const userSlice = createSlice({
     setMessage: (state, action) => {
       state.message = action.payload;
     },
+  
   },
+  extraReducers:(builder)=>{
+    builder.addCase(loginPost.pending, (state,action)=>{
+state.loading = true;
+    })
+    builder.addCase(loginPost.rejected, (state,action)=>{
+      state.error = 'process failed'
+      state.loading = false;
+    })
+    builder.addCase(loginPost.fulfilled, (state,action)=>{
+       
+      state.user = payload.content;
+      state.token = payload.accessToken;
+      state.role = payload.content.role;
+      state.loading = false;
+    })
+  }
 });
 
 export const { login, setMessage, updateProfile } = userSlice.actions;
